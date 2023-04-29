@@ -2,7 +2,7 @@ import random
 import time
 
 import pygame
-from pygame.locals import  *
+from pygame.locals import *
 
 SIZE = 40
 BACKGROUND_COLOR = (110, 110, 5)
@@ -26,17 +26,18 @@ class Apple:
 
 
 class Snake:
-    def __init__(self, parent_screen, length):
-        self.length = length
+    def __init__(self, parent_screen, ):
+        
         self.parent_screen = parent_screen
         self.block = pygame.image.load("resources/block.jpg").convert()
-
-        self.x = [SIZE] * length
-        self.y = [SIZE] * length
         self.direction = "down"
+        self.length = 1
+        self.x = [40]
+        self.y = [40]
+        
 
     def draw(self):
-        self.parent_screen.fill(BACKGROUND_COLOR)
+        
         for i in range(self.length):
             self.parent_screen.blit(self.block, (self.x[i], self.y[i]))
         pygame.display.flip()
@@ -98,8 +99,9 @@ class Game:
         self.apple.draw()
 
     def is_collision(self, x1, y1, x2, y2):
-        if x2 <= x1 < x2 + SIZE and y2 <= y1 < y2 + SIZE:
-            return True
+        if x1 >= x2 and x1 < x2 + SIZE:
+            if y1 >= y2 and y1 < y2 + SIZE:
+                return True
 
         return False
 
@@ -119,7 +121,12 @@ class Game:
         elif sound_name == 'ding':
             sound = pygame.mixer.Sound("resources/ding.mp3")
 
+    def render_background(self):
+        bg = pygame.image.load("resources/background.jpg")
+        self.surface.blit(bg, (0, 0))
+
     def play(self):
+        self.render_background()
         self.snake.walk()
         self.apple.draw()
         self.display_score()
@@ -129,8 +136,9 @@ class Game:
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
             self.play_sound("ding")
 
-            self.apple.move()
+            
             self.snake.increase_length()
+            self.apple.move()
 
         # snake colliding with itself
         for i in range(3, self.snake.length):
